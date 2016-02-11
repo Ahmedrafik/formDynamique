@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en" ng-app="app">
+<head>
+  <meta charset="utf-8">
+  <title>Formulaire dynamique</title>
+  <link rel="stylesheet" href="app.css"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular-messages.js"></script>
+  <script src="app.js"></script>
+</head>
+
+<body ng-controller="DynFormCtrl as formCtrl">
+  <h1>Formulaire dynamique</h1>
+
+  <form name="form" novalidate>
+  	<div ng-repeat="field in formCtrl.fields" ng-switch="field.type" ng-form name="formRow">
+  		{{field.label}}
+  		<span ng-show="field.constraints.required">*</span>
+  		<span ng-switch-when="select"><select ng-model="formCtrl.data[field.property]"
+  					ng-options="code as label for (code, label) in field.list"></select></span> 			
+  					<!-- ng-options="variable nameAttribut as valeurAttribut for (nameAttribut, valeurAttribut) in attribut contenant la liste" -->
+
+  		<span ng-switch-when="checkbox"><input type="checkbox" ng-model="formCtrl.data[field.property]"></span>
+  		<span ng-switch-default><input type="{{field.type}}" name="inputField" 
+  															 ng-model="formCtrl.data[field.property]"
+  															 ng-required="field.constraints.required"></span>
+  		<span ng-messages="formRow.inputField.$error" class="error"
+  			  ng-show="formRow.inputField.$touched">
+  			<span ng-message="number">Ceci n'est pas un nombre</span>
+  			<span ng-message="email">Format email incorrect</span>
+  			<span ng-message="required">Ce champ est obligatoire</span>
+  		</span>
+  		<br><br>
+  	</div>
+  </form>
+
+  <pre>{{formCtrl.data}}</pre>
+
+  <pre>{{formCtrl.fields | json}}</pre>
+
+</body>
+</html>
